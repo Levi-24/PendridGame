@@ -25,10 +25,11 @@ public class Player_Controller : MonoBehaviour
     [SerializeField] private TrailRenderer tr;
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private ParticleSystem bloodParticle;
-
-
     [SerializeField] private TMP_Text tmpText;
     [SerializeField] private float fadeDuration = 2f;
+
+    [SerializeField] private FixedJoystick joystick; // Joystick input reference
+    [SerializeField] private Animator animator; // Animator for player animation
 
     private Vector2 moveDirection;
     private bool isDashing;
@@ -40,25 +41,25 @@ public class Player_Controller : MonoBehaviour
         currentHealth = maxHealth;
         if (spriteRenderer == null)
         {
-            spriteRenderer = GetComponent<SpriteRenderer>(); // Try to get SpriteRenderer if not assigned
+            spriteRenderer = GetComponent<SpriteRenderer>();
         }
     }
 
     private void Update()
     {
-        HandleMovementInput();
         HandleDashingInput();
     }
 
     private void FixedUpdate()
     {
+        HandleMovementInput();
         MovePlayer();
         HandleDashEnd();
     }
 
     private void HandleMovementInput()
     {
-        moveDirection = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical")).normalized;
+        moveDirection = new Vector2(joystick.Horizontal, joystick.Vertical).normalized; 
     }
 
     private void HandleDashingInput()
@@ -74,7 +75,18 @@ public class Player_Controller : MonoBehaviour
         if (!isKnockedBack)
         {
             float speed = isDashing ? dashSpeed : moveSpeed;
-            rb.velocity = moveDirection * speed * Time.fixedDeltaTime;
+            rb.velocity = new Vector2(moveDirection.x * speed * Time.fixedDeltaTime, moveDirection.y * speed * Time.fixedDeltaTime); // Updated to 2D movement
+
+            if (moveDirection.magnitude > 0.1f)
+            {
+                // Rotate player towards the direction of movement
+                transform.up = moveDirection; // This will rotate the sprite to face the direction of movement
+
+            }
+            else
+            {
+
+            }
         }
     }
 
@@ -111,7 +123,6 @@ public class Player_Controller : MonoBehaviour
         {
             Debug.Log("Player Died");
             StartCoroutine(FadeInText(fadeDuration));
-            // Handle player death (e.g., restart game, show game over screen)
         }
     }
 
@@ -127,7 +138,6 @@ public class Player_Controller : MonoBehaviour
         }
     }
 
-
     private IEnumerator InvincibilityCoroutine()
     {
         float flashDuration = .6f; // Duration of invincibility effect
@@ -135,7 +145,6 @@ public class Player_Controller : MonoBehaviour
 
         for (float t = 0; t < flashDuration; t += flashInterval)
         {
-            // Toggle visibility
             spriteRenderer.enabled = !spriteRenderer.enabled; // Toggle sprite visibility
             yield return new WaitForSeconds(flashInterval);
         }
@@ -183,5 +192,4 @@ public class Player_Controller : MonoBehaviour
         color.a = alpha; // Set the new alpha value
         tmpText.color = color; // Apply the new color back to the text
     }
-
 }

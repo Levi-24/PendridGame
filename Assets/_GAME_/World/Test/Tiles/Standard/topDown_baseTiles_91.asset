@@ -13,7 +13,7 @@ MonoBehaviour:
   m_Name: topDown_baseTiles_91
   m_EditorClassIdentifier: 
   m_Sprite: {fileID: -1275195094, guid: 4cef94aa87689334a8da1eb158b5412b, type: 3}
-  m_Color: {r: 1, g: 1, b: 1, a: 1}
+  m_Color: {r: 0.6886792, g: 0.1786668, b: 0.1786668, a: 1}
   m_Transform:
     e00: 1
     e01: 0
