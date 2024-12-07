@@ -3,6 +3,7 @@ using System.Collections;
 using System.Xml;
 using TMPro;
 using UnityEngine;
+using UnityEngine.UI;
 
 [SelectionBase]
 public class Player_Controller : MonoBehaviour
@@ -24,7 +25,8 @@ public class Player_Controller : MonoBehaviour
     [SerializeField] private SpriteRenderer spriteRenderer;
     [SerializeField] private ParticleSystem bloodParticle;
     [SerializeField] private TMP_Text tmpText;
-    [SerializeField] private float fadeDuration = 2f;
+    [SerializeField] private Button backToMenuButton;
+    [SerializeField] private float fadeDuration = 3f;
 
     [SerializeField] private FixedJoystick joystick;
     [SerializeField] private RectTransform joyHandle;
@@ -82,12 +84,21 @@ public class Player_Controller : MonoBehaviour
         if (currentHealth <= 0)
         {
             Debug.Log("Player Died");
+
+    
             joyHandle.anchoredPosition = Vector2.zero;
             moveSpeed = 0;
             joystick.enabled = false;
+
+          
+            tmpText.text = "You Died!";
             StartCoroutine(FadeInText(fadeDuration));
+
+           
+            StartCoroutine(ShowButtonAfterFade(fadeDuration));
         }
     }
+
 
     public void PlayBloodParticle(Vector2 hitPosition)
     {
@@ -150,6 +161,14 @@ public class Player_Controller : MonoBehaviour
         SetTextAlpha(targetAlpha);
         Debug.Log("faded in");
     }
+    private IEnumerator ShowButtonAfterFade(float waitTime)
+    {
+        yield return new WaitForSeconds(waitTime); 
+        backToMenuButton.gameObject.SetActive(true); 
+    }
+
+
+
 
     private void SetTextAlpha(float alpha)
     {
